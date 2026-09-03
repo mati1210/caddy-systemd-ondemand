@@ -27,7 +27,7 @@ const (
 func init() {
 	caddy.RegisterModule(ServiceStarter{})
 	httpcaddyfile.RegisterHandlerDirective(DIRECTIVE, parseCaddyfile)
-	httpcaddyfile.RegisterDirectiveOrder(DIRECTIVE, httpcaddyfile.Before, "reverse_proxy")
+	httpcaddyfile.RegisterDirectiveOrder(DIRECTIVE, httpcaddyfile.Before, "abort")
 }
 
 func (s ServiceStarter) CaddyModule() caddy.ModuleInfo {
