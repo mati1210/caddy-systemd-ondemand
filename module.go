@@ -1,6 +1,7 @@
 package caddyondemandsystemd
 
 import (
+	_ "embed"
 	"fmt"
 	"net/http"
 	"os/exec"
@@ -53,6 +54,9 @@ type ServiceStarter struct {
 	logger  *zap.Logger
 }
 
+//go:embed default_starting.html
+var body string
+
 // ServeHTTP implements [caddyhttp.MiddlewareHandler].
 func (s ServiceStarter) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) error {
 	if s.ServiceRunning() {
@@ -65,8 +69,10 @@ func (s ServiceStarter) ServeHTTP(w http.ResponseWriter, r *http.Request, next c
 	w.Header().Add("Content-Type", "text/html;charset=utf-8")
 	w.WriteHeader(503)
 
-	//TODO: js to automatically restart
-	w.Write([]byte("service is starting, please wait"))
+	if s.Body == "" {
+		s.Body = body
+	}
+	w.Write([]byte(s.Body))
 	return nil
 }
 
