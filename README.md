@@ -29,8 +29,8 @@ then, on your caddyfile, add it before your `reverse_proxy` directive
 ```caddyfile
 foo.example.org {
     systemd_service foo.service {
-        # (optional) how long it should take to try refreshing the page
-        startup_secs 5
+        # (optional) how long the service takes to start, in avg
+        startup_time 5s
 
         # (optional) replace the default "service is starting" http page with something else
         body "wait!"
