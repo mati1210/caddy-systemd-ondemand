@@ -49,16 +49,18 @@ type ServiceStarter struct {
 	Body       string `json:"body,omitempty"`
 	StatusCode string `json:"status_code,omitempty"`
 
+	// state TODO: mutex?
 	running Status
 	started time.Time
-	logger  *zap.Logger
+
+	logger *zap.Logger
 }
 
 //go:embed default_starting.html
 var body string
 
 // ServeHTTP implements [caddyhttp.MiddlewareHandler].
-func (s ServiceStarter) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) error {
+func (s *ServiceStarter) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) error {
 	if s.ServiceRunning() {
 		return next.ServeHTTP(w, r)
 	}
@@ -150,7 +152,7 @@ func (s *ServiceStarter) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 func parseCaddyfile(h httpcaddyfile.Helper) (caddyhttp.MiddlewareHandler, error) {
 	var m ServiceStarter
 	err := m.UnmarshalCaddyfile(h.Dispenser)
-	return m, err
+	return &m, err
 }
 
 // Interface guards
